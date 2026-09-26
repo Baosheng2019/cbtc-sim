@@ -13,10 +13,10 @@ env/
 .vscode/
 .idea/
 
-# 仿真输出（每次运行都会变，不需要提交）
+# 仿真输出
 *.png
-cbtc_sim.log
 *.log
+cbtc_sim.log
 
 # OS
 .DS_Store
