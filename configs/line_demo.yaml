@@ -1,0 +1,108 @@
+name: Y-Shape Demo Line
+
+#区段划分的说明
+#区段	范围	分支	对应车站/设施
+#S1	0 ~ 500	common	起点 → A 站（A 在 500m）
+#S2	500 ~ 1500	common	A → B 站（B 在 1500m）
+#S3	1500 ~ 2000	common	B → 道岔 SW1（SW1 在 2000m）
+#S4m	2000 ~ 2200	main	道岔区（低速 10m/s）
+#S5m	2200 ~ 3500	main	主线高速段，含 D 站（3400m）
+#S4b	2000 ~ 2200	branch	支线道岔区
+#S5b	2200 ~ 3200	branch	支线，含 E 站（3100m）
+#
+segments:
+  # 共线段 0 ~ 2000
+  - start: 0
+    end: 2000
+    speed_limit: 22.0
+    gradient: 0.0
+    branch: common
+
+  # 主线 2000 ~ 3500
+  - start: 2000
+    end: 2200
+    speed_limit: 10.0
+    gradient: 0.0
+    branch: main
+  - start: 2200
+    end: 3500
+    speed_limit: 22.0
+    gradient: 0.0
+    branch: main
+
+  # 支线 2000 ~ 3200
+  - start: 2000
+    end: 2200
+    speed_limit: 10.0
+    gradient: 0.0
+    branch: branch
+  - start: 2200
+    end: 3200
+    speed_limit: 18.0
+    gradient: 0.01
+    branch: branch
+
+switches:
+  - name: SW1
+    position: 2000.0
+    normal_branch: main
+    reverse_branch: branch
+
+stations:
+  - name: A
+    position: 500.0
+    branch: common
+    dwell_time: 15.0
+    stop_window: 0.5
+  - name: B
+    position: 1500.0
+    branch: common
+    dwell_time: 20.0
+    stop_window: 0.5
+  - name: D
+    position: 3400.0
+    branch: main
+    dwell_time: 15.0
+    stop_window: 0.5
+  - name: E
+    position: 3100.0
+    branch: branch
+    dwell_time: 15.0
+    stop_window: 0.5
+
+# 新增：轨道区段（用于联锁的空闲/占用判定）
+# 划分原则：大致对应"A/B/D/E 车站 + 道岔 + 普通区段"
+sections:
+  # 共线段 0 ~ 2000：三段
+  - name: S1
+    start: 0
+    end: 500
+    branch: common
+  - name: S2
+    start: 500
+    end: 1500
+    branch: common
+  - name: S3
+    start: 1500
+    end: 2000      # 含道岔 SW1 所在位置 2000
+    branch: common
+
+  # 主线 2000 ~ 3500：两段
+  - name: S4m
+    start: 2000
+    end: 2200
+    branch: main
+  - name: S5m
+    start: 2200
+    end: 3500
+    branch: main
+
+  # 支线 2000 ~ 3200：两段
+  - name: S4b
+    start: 2000
+    end: 2200
+    branch: branch
+  - name: S5b
+    start: 2200
+    end: 3200
+    branch: branch
